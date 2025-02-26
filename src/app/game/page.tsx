@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getRandomShape, moveShapeLeft, moveShapeRight, moveShapeDown, placeShape } from '../utils/tetrisUtils';
+import { getRandomShape, moveShapeLeft, moveShapeRight, moveShapeDown, placeShape, isShapeAtBottom, rotateShape } from '../utils/tetrisUtils';
 
 export default function Play() {
   const [score, setScore] = useState(0);
@@ -20,11 +20,20 @@ export default function Play() {
   useEffect(() => {
     if (isRunning) {
       const gameInterval = setInterval(() => {
-        setPosition((prevPosition) => moveShapeDown(prevPosition, board, currentShape));
+        setPosition((prevPosition) => {
+          const newPosition = moveShapeDown(prevPosition, board, currentShape);
+          if (isShapeAtBottom(newPosition, board, currentShape)) {
+            setBoard((prevBoard) => placeShape([...prevBoard], prevPosition, currentShape)); // Place at previous position
+            setCurrentShape(getRandomShape()); // Get a new shape
+            return 0; // Reset position for the new shape
+          }
+          return newPosition;
+        });
       }, 1000);
       return () => clearInterval(gameInterval);
     }
-  }, [isRunning, position, board, currentShape]);
+  }, [isRunning, board, currentShape]);
+
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -36,6 +45,9 @@ export default function Play() {
       }
       if (event.key === 'ArrowDown') {
         setPosition((prevPosition) => moveShapeDown(prevPosition, board, currentShape));
+      }
+      if(event.key === 'ArrowUp') {
+        setCurrentShape((prevShape) => rotateShape(prevShape));
       }
     };
 

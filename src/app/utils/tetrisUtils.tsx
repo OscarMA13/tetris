@@ -41,6 +41,33 @@ export const shapes = [
     return isAtBottom ? position : newPosition;
   };
 
+  export const isShapeAtBottom = (position: number, board: (string | null)[], currentShape: number[][]): boolean => {
+    return currentShape.some((row, rowIndex) =>
+      row.some((cell, colIndex) => {
+        if (cell === 1) {
+          const absolutePosition = position + rowIndex * 10 + colIndex;
+          // Check if it's at the bottom or touching another shape
+          return absolutePosition + 10 >= 200 || board[absolutePosition + 10] !== null;
+        }
+        return false;
+      })
+    );
+  };
+
+  export const rotateShape = (shape: number[][]): number[][] => {
+    const rows = shape.length;
+    const cols = shape[0].length;
+    const newShape = Array.from({ length: cols }, () => Array(rows).fill(0));
+  
+    for (let row = 0; row < rows; row++) {
+      for (let col = 0; col < cols; col++) {
+        newShape[col][rows - 1 - row] = shape[row][col];
+      }
+    }
+    return newShape;
+  };
+  
+
   export const placeShape = (board: (string | null)[], position: number, currentShape: number[][]): (string | null)[] => {
     const newBoard = [...board];
     currentShape.forEach((row, rowIndex) => {
