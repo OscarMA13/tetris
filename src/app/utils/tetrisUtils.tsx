@@ -26,48 +26,19 @@ export const shapes = [
     return position + 1;
   };
 
-  export const moveShapeDown = (
-    position: number,
-    board: (string | null)[],
-    currentShape: number[][],
-    setBoard: React.Dispatch<React.SetStateAction<(string | null)[]>>,
-    setCurrentShape: React.Dispatch<React.SetStateAction<number[][]>>,
-    setPosition: React.Dispatch<React.SetStateAction<number>>,
-    getRandomShape: () => number[][]
-  ) => {
+  export const moveShapeDown = (position: number, board: (string | null)[], currentShape: number[][]): number => {
     const newPosition = position + 10;
-  
-    const isAtBottomOrColliding = currentShape.some((row, rowIndex) =>
+    const isAtBottom = currentShape.some((row, rowIndex) =>
       row.some((cell, colIndex) => {
         if (cell === 1) {
           const absolutePosition = newPosition + rowIndex * 10 + colIndex;
-          return absolutePosition >= 190 || board[absolutePosition] !== null;
+          return absolutePosition >= 200 || board[absolutePosition] !== null;
         }
         return false;
       })
     );
-  
-    if (isAtBottomOrColliding) {
-      // Place the shape permanently on the board
-      setBoard((prevBoard) => {
-        const newBoard = [...prevBoard];
-        currentShape.forEach((row, rowIndex) => {
-          row.forEach((cell, colIndex) => {
-            if (cell === 1) {
-              const absolutePosition = position + rowIndex * 10 + colIndex;
-              newBoard[absolutePosition] = 'shape';
-            }
-          });
-        });
-        return newBoard;
-      });
-      // Generate a new shape and reset position
-      setCurrentShape(getRandomShape());
-      setPosition(4); // Start in the middle of the board
-    } else {
-      // Otherwise, just move the shape down
-      setPosition(newPosition);
-    }
+
+    return isAtBottom ? position : newPosition;
   };
 
   export const placeShape = (board: (string | null)[], position: number, currentShape: number[][]): (string | null)[] => {
