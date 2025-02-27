@@ -47,7 +47,8 @@ export default function Play() {
         setPosition((prevPosition) => moveShapeDown(prevPosition, board, currentShape));
       }
       if(event.key === 'ArrowUp') {
-        setCurrentShape((prevShape) => rotateShape(prevShape));
+        console.log(position);
+        setCurrentShape((prevShape) => rotateShape(prevShape, position, board));
       }
     };
 
